@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    application
+    id("me.champeau.jmh") version "0.7.1"
 }
 
 group = "space.iseki.strings"
@@ -13,7 +13,10 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.jetbrains:annotations:13.0")
+    testImplementation(kotlin("stdlib"))
     testImplementation(kotlin("test"))
+    jmh(kotlin("stdlib"))
 }
 
 tasks.test {
@@ -24,6 +27,3 @@ tasks.withType<KotlinCompile> {
 //    kotlinOptions.jvmTarget = "1.8"
 }
 
-application {
-    mainClass.set("MainKt")
-}
