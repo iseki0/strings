@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-class PrintableSplitInputStream extends InputStream {
+public class PrintableSplitInputStream extends InputStream {
     private final ByteBuffer buffer;
     private final InputStream inputStream;
     private int state = S_FILL;
@@ -22,7 +22,7 @@ class PrintableSplitInputStream extends InputStream {
         this.inputStream = inputStream;
     }
 
-    PrintableSplitInputStream(@NotNull InputStream inputStream){
+    PrintableSplitInputStream(@NotNull InputStream inputStream) {
         this(inputStream, 4);
     }
 
@@ -69,6 +69,7 @@ class PrintableSplitInputStream extends InputStream {
     private boolean printable(int ch) {
         return (ch >= 32 || ch == '\t') && ch < 127;
     }
+
     @Override
     public void close() throws IOException {
         inputStream.close();
