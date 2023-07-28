@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.9.0"
     id("me.champeau.jmh") version "0.7.1"
@@ -22,10 +20,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-//    kotlinOptions.jvmTarget = "1.8"
 }
 
 fun JavaToolchainSpec.configure() {
