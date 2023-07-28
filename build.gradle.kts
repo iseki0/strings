@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.9.0"
     id("me.champeau.jmh") version "0.7.1"
+    jacoco
 }
 
 group = "space.iseki.strings"
