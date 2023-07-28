@@ -27,3 +27,18 @@ tasks.withType<KotlinCompile> {
 //    kotlinOptions.jvmTarget = "1.8"
 }
 
+fun JavaToolchainSpec.configure() {
+    languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+    javaCompiler.set(javaToolchains.compilerFor { configure() })
+}
+
