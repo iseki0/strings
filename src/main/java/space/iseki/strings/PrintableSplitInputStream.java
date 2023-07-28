@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-public class PrintableSplitInputStream extends InputStream {
+class PrintableSplitInputStream extends InputStream {
     private final ByteBuffer buffer;
     private final InputStream inputStream;
     private int state = S_FILL;
