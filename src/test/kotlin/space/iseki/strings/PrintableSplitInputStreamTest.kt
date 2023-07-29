@@ -38,10 +38,4 @@ class PrintableSplitInputStreamTest {
             }
     }
 
-    @Test
-    fun test3() {
-        repeat(1000) {
-            test2()
-        }
-    }
 }

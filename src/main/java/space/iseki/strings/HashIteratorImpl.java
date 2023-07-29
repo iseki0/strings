@@ -14,7 +14,7 @@ class HashIteratorImpl implements Iterator<byte[]> {
     private final MessageDigest messageDigest;
     private final byte[] buffer;
     private final PrintableSplitInputStream inputStream;
-    private byte[] hash;
+    private byte[] last;
 
 
     @SuppressWarnings("ConstantValue")
@@ -33,6 +33,7 @@ class HashIteratorImpl implements Iterator<byte[]> {
 
     private @Nullable byte[] doHash() {
         try {
+            inputStream.next();
             var n = inputStream.read(buffer);
             if (n == -1) return null;
             messageDigest.update(buffer, 0, n);
@@ -51,16 +52,15 @@ class HashIteratorImpl implements Iterator<byte[]> {
 
     @Override
     public boolean hasNext() {
-        if (hash == null) hash = doHash();
-        return hash != null;
+        if (last == null) last = doHash();
+        return last != null;
     }
 
     @Override
     public @NotNull byte[] next() {
-        if (hash == null) hash = doHash();
-        if (hash == null) throw new NoSuchElementException();
-        var t = hash;
-        hash = null;
+        if (!hasNext()) throw new NoSuchElementException();
+        var t = last;
+        last = null;
         return t;
     }
 }
