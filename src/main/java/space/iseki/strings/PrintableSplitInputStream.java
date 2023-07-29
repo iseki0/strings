@@ -9,11 +9,11 @@ import java.nio.ByteBuffer;
 class PrintableSplitInputStream extends InputStream {
     private final ByteBuffer buffer;
     private final InputStream inputStream;
-    private int state = S_FILL;
-    private static final int S_FILL = 0;
-    private static final int S_OUT = 1;
-    private static final int S_CONT = 2;
-    private static final int S_PAUSE = 3;
+    private int state = FILLING;
+
+    private static final int FILLING = 1;
+    private static final int PRINTING = 2;
+    private static final int PAUSE = 3;
 
     PrintableSplitInputStream(@NotNull InputStream inputStream, int min) {
         //noinspection ConstantValue
@@ -30,31 +30,27 @@ class PrintableSplitInputStream extends InputStream {
     public int read() throws IOException {
         while (true) {
             switch (state) {
-                case S_FILL -> {
-                    if (!buffer.hasRemaining()) {
-                        state = S_OUT;
-                        buffer.flip();
-                        continue;
-                    }
-                    var ch = inputStream.read();
-                    if (ch == -1) return -1;
-                    if (printable(ch)) {
-                        buffer.put((byte) ch);
+                case FILLING -> {
+                    var i = inputStream.read();
+                    if (i == -1) return -1;
+                    if (printable(i)) {
+                        buffer.put((byte) i);
                     } else {
                         buffer.clear();
                     }
+                    if (!buffer.hasRemaining()) {
+                        buffer.flip();
+                        state = PRINTING;
+                    }
                 }
-                case S_OUT -> {
+                case PRINTING -> {
                     if (buffer.hasRemaining()) return buffer.get();
-                    state = S_CONT;
-                    buffer.clear();
+                    var i = inputStream.read();
+                    if (i == -1) return -1;
+                    if (printable(i)) return i;
+                    state = PAUSE;
                 }
-                case S_CONT -> {
-                    var ch = inputStream.read();
-                    if (ch == -1 || printable(ch)) return ch;
-                    state = S_PAUSE;
-                }
-                case S_PAUSE -> {
+                case PAUSE -> {
                     return -1;
                 }
             }
@@ -62,8 +58,9 @@ class PrintableSplitInputStream extends InputStream {
     }
 
     public void next() {
-        if (state != S_PAUSE) return;
-        state = S_FILL;
+        if (state != PAUSE) return;
+        buffer.clear();
+        state = FILLING;
     }
 
     private boolean printable(int ch) {
