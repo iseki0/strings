@@ -5,7 +5,6 @@ import java.nio.file.Path
 import kotlin.io.path.inputStream
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
-import kotlin.time.measureTime
 
 class PrintableSplitInputStreamTest {
     @Test
@@ -43,7 +42,6 @@ class PrintableSplitInputStreamTest {
     fun test3() {
         repeat(1000) {
             test2()
-//            measureTime { test2() }//.also(::println)
         }
     }
 }
