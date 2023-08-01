@@ -44,7 +44,7 @@ class PrintableSplitInputStream extends InputStream {
                     }
                 }
                 case PRINTING -> {
-                    if (buffer.hasRemaining()) return buffer.get();
+                    if (buffer.hasRemaining()) return buffer.get() & 0xFF;
                     var i = inputStream.read();
                     if (i == -1) return -1;
                     if (printable(i)) return i;
