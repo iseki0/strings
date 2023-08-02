@@ -2,7 +2,6 @@ package space.iseki.strings;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Iterator;
@@ -19,7 +18,7 @@ public class Strings {
      * @return the returned iterator will throw {@link java.io.UncheckedIOException} when the underlying input stream throws {@link java.io.IOException}
      */
     public static @NotNull Iterator<byte[]> createHashIterator(@NotNull MessageDigest messageDigest, @NotNull InputStream inputStream){
-        return new HashIteratorImpl(messageDigest, new PrintableSplitInputStream(new BufferedInputStream(inputStream)));
+        return new HashIteratorImpl(messageDigest, new PrintableSplitInputStream(inputStream));
     }
 
     /**

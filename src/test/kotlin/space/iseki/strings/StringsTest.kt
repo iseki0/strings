@@ -11,7 +11,7 @@ class StringsTest {
 
     @Test
     fun test1() {
-        Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().use {
+        Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().buffered().use {
             Strings.createHashIterator(MessageDigest.getInstance("MD5"), it)
                 .forEach { println(HexFormat.of().formatHex(it)) }
         }
@@ -19,7 +19,7 @@ class StringsTest {
 
     @Test
     fun test2() {
-        Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().use {
+        Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().buffered().use {
             Strings.createByteArrayIterator(it).forEach { println(it.toString(StandardCharsets.ISO_8859_1)) }
         }
     }
