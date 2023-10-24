@@ -7,14 +7,14 @@ plugins {
 }
 
 group = "space.iseki.strings"
-version = "0.2.0-SNAPSHOT"
+version = "0.3.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:13.0")
+    compileOnly("org.jetbrains:annotations:24.0.1")
     testImplementation(kotlin("stdlib"))
     testImplementation(kotlin("test"))
     jmh(kotlin("stdlib"))
@@ -97,4 +97,12 @@ afterEvaluate {
         useGpgCmd()
         publishing.publications.forEach { sign(it) }
     }
+}
+
+// https://kotlinlang.org/docs/gradle-configure-project.html#configure-with-java-modules-jpms-enabled
+tasks.named("compileJava", JavaCompile::class.java) {
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        // Provide compiled Kotlin classes to javac – needed for Java/Kotlin mixed sources to work
+        listOf("--patch-module", "space.iseki.strings=${sourceSets["main"].output.asPath}")
+    })
 }
