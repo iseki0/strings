@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.security.MessageDigest
-import java.util.HexFormat
+import java.util.*
 import kotlin.io.path.inputStream
 
 class StringsTest {

@@ -4,10 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 
 /**
- *
  * Masks:
  * <pre>
  *     #define L  (const unsigned short) (lo|is   |pr)	* lower case letter *
@@ -53,6 +51,8 @@ import java.nio.ByteBuffer;
  * 	   || (include_all_whitespace && ISSPACE (c))) \
  *       )
  * </pre>
+ * The implementation is not thread-safe.
+ *
  * @see <a href="https://github.com/redox-os/binutils-gdb/blob/f35674005e609660f5f45005a9e095541ca4c5fe/binutils/strings.c#L79">strings.c</a>
  * @see <a href="https://github.com/gcc-mirror/gcc/blob/86d92c84762f8c805c4e3d87f394c095139c81f0/libiberty/safe-ctype.c#L126">safe-ctype.c</a>
  */
@@ -60,10 +60,11 @@ class PrintableSplitInputStream extends InputStream {
     private static final int FILLING = 1;
     private static final int PRINTING = 2;
     private static final int PAUSE = 3;
-    private final ByteBuffer buffer;
     private final InputStream inputStream;
+    private final boolean space;
+    private final byte[] buf;
     private int state = FILLING;
-    private boolean space = false;
+    private int pos;
 
     PrintableSplitInputStream(@NotNull InputStream inputStream, int min) {
         this(inputStream, min, false);
@@ -72,7 +73,8 @@ class PrintableSplitInputStream extends InputStream {
     PrintableSplitInputStream(@NotNull InputStream inputStream, int min, boolean space) {
         //noinspection ConstantValue
         if (inputStream == null) throw new NullPointerException("inputStream == null");
-        buffer = ByteBuffer.allocate(min);
+        if (min < 1) throw new IllegalArgumentException("min < 1");
+        this.buf = new byte[min];
         this.inputStream = inputStream;
         this.space = space;
     }
@@ -81,40 +83,47 @@ class PrintableSplitInputStream extends InputStream {
         this(inputStream, 4);
     }
 
+
     @Override
     public int read() throws IOException {
         while (true) {
-            switch (state) {
-                case FILLING -> {
+            if (state == FILLING) {
+                if (pos < buf.length) {
                     var i = inputStream.read();
                     if (i == -1) return -1;
-                    if (printable(i)) {
-                        buffer.put((byte) i);
-                    } else {
-                        buffer.clear();
+                    if (!printable(i)) {
+                        pos = 0;
+                        continue;
                     }
-                    if (!buffer.hasRemaining()) {
-                        buffer.flip();
-                        state = PRINTING;
-                    }
+                    buf[pos] = (byte) i;
+                    pos++;
+                    continue;
                 }
-                case PRINTING -> {
-                    if (buffer.hasRemaining()) return buffer.get() & 0xFF;
-                    var i = inputStream.read();
-                    if (i == -1) return -1;
-                    if (printable(i)) return i;
-                    state = PAUSE;
-                }
-                case PAUSE -> {
-                    return -1;
-                }
+                state = PRINTING;
+                pos = 1;
+                return buf[0] & 0xFF;
             }
+            if (state == PRINTING) {
+                if (pos < buf.length) {
+                    var r = buf[pos];
+                    pos++;
+                    return r & 0xFF;
+                }
+                var r = inputStream.read();
+                if (printable(r)) {
+                    return r;
+                }
+                state = PAUSE;
+                return -1;
+            }
+            if (state == PAUSE) return -1;
+            throw new IllegalStateException("invalid state");
         }
     }
 
     public void next() {
         if (state != PAUSE) return;
-        buffer.clear();
+        pos = 0;
         state = FILLING;
     }
 

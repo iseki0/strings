@@ -34,7 +34,7 @@ class BytesIteratorImpl implements Iterator<byte[]> {
     private byte[] doRead() {
         inputStream.next();
         try {
-            var arr =  inputStream.readAllBytes();
+            var arr = inputStream.readAllBytes();
             if (arr.length == 0) return null;
             return arr;
         } catch (IOException e) {
