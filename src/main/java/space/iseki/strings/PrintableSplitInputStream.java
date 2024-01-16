@@ -57,14 +57,12 @@ import java.io.InputStream;
  * @see <a href="https://github.com/gcc-mirror/gcc/blob/86d92c84762f8c805c4e3d87f394c095139c81f0/libiberty/safe-ctype.c#L126">safe-ctype.c</a>
  */
 class PrintableSplitInputStream extends InputStream {
-    private static final int FILLING = 1;
-    private static final int PRINTING = 2;
-    private static final int PAUSE = 3;
     private final InputStream inputStream;
     private final boolean space;
     private final byte[] buf;
-    private int state = FILLING;
     private int pos;
+    private boolean acc = true;
+    private boolean pause = false;
 
     PrintableSplitInputStream(@NotNull InputStream inputStream, int min) {
         this(inputStream, min, false);
@@ -87,44 +85,37 @@ class PrintableSplitInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         while (true) {
-            if (state == FILLING) {
-                if (pos < buf.length) {
+            if (pause) return -1;
+            if (acc) {
+                var i = inputStream.read();
+                if (i == -1) return -1;
+                if (printable(i)) {
+                    buf[pos++] = (byte) i;
+                    if (pos == buf.length) {
+                        acc = false;
+                    }
+                } else {
+                    pos = 0;
+                }
+            } else {
+                if (pos == 0) {
                     var i = inputStream.read();
                     if (i == -1) return -1;
                     if (!printable(i)) {
-                        pos = 0;
-                        continue;
+                        acc = true;
                     }
-                    buf[pos] = (byte) i;
-                    pos++;
-                    continue;
+                    if (printable(i)) return i;
+                    acc = true;
+                    pause = true;
+                } else {
+                    return buf[buf.length - pos--] & 0xff;
                 }
-                state = PRINTING;
-                pos = 1;
-                return buf[0] & 0xFF;
             }
-            if (state == PRINTING) {
-                if (pos < buf.length) {
-                    var r = buf[pos];
-                    pos++;
-                    return r & 0xFF;
-                }
-                var r = inputStream.read();
-                if (printable(r)) {
-                    return r;
-                }
-                state = PAUSE;
-                return -1;
-            }
-            if (state == PAUSE) return -1;
-            throw new IllegalStateException("invalid state");
         }
     }
 
     public void next() {
-        if (state != PAUSE) return;
-        pos = 0;
-        state = FILLING;
+        pause = false;
     }
 
     private boolean printable(int ch) {
