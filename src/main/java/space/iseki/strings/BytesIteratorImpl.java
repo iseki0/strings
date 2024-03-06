@@ -9,7 +9,8 @@ import java.util.NoSuchElementException;
 
 class BytesIteratorImpl implements Iterator<byte[]> {
     private final PrintableSplitInputStream inputStream;
-    private byte[] last;
+    private boolean alreadyNext;
+    private boolean lastNext;
 
     @SuppressWarnings("ConstantValue")
     BytesIteratorImpl(@NotNull PrintableSplitInputStream inputStream) {
@@ -19,26 +20,24 @@ class BytesIteratorImpl implements Iterator<byte[]> {
 
     @Override
     public boolean hasNext() {
-        if (last == null) last = doRead();
-        return last != null;
+        if (alreadyNext) return lastNext;
+        try {
+            alreadyNext = true;
+            return lastNext = inputStream.next();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
     public byte @NotNull [] next() {
         if (!hasNext()) throw new NoSuchElementException();
-        var t = last;
-        last = null;
-        return t;
-    }
-
-    private byte[] doRead() {
         try {
-            inputStream.next();
-            var arr = inputStream.readAllBytes();
-            if (arr.length == 0) return null;
-            return arr;
+            alreadyNext = false;
+            return inputStream.readAllBytes();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
+
 }

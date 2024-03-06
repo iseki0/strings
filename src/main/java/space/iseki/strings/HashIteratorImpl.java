@@ -11,9 +11,11 @@ import java.util.NoSuchElementException;
 class HashIteratorImpl implements Iterator<byte[]> {
     private static final int DEFAULT_BUFFER_SIZE = 16 * 1024;
     private final MessageDigest messageDigest;
-    private final byte[] buffer;
+    private byte[] buffer;
     private final PrintableSplitInputStream inputStream;
-    private byte[] last;
+    private boolean alreadyNext;
+    private boolean lastNext;
+    private final int bufferSize;
 
 
     @SuppressWarnings("ConstantValue")
@@ -21,7 +23,7 @@ class HashIteratorImpl implements Iterator<byte[]> {
         if (messageDigest == null) throw new NullPointerException("messageDigest == null");
         if (inputStream == null) throw new NullPointerException("inputStream == null");
         if (bufferSize <= 0) throw new IllegalArgumentException("bufferSize <= 0");
-        this.buffer = new byte[bufferSize];
+        this.bufferSize = bufferSize;
         this.inputStream = inputStream;
         this.messageDigest = messageDigest;
     }
@@ -30,14 +32,27 @@ class HashIteratorImpl implements Iterator<byte[]> {
         this(messageDigest, inputStream, DEFAULT_BUFFER_SIZE);
     }
 
-    private byte[] doHash() {
+    @Override
+    public boolean hasNext() {
+        if (alreadyNext) return lastNext;
         try {
-            inputStream.next();
-            var n = inputStream.read(buffer);
-            if (n == -1) return null;
-            messageDigest.update(buffer, 0, n);
+            alreadyNext = true;
+            lastNext = inputStream.next();
+            if (!lastNext) buffer = null;
+            return lastNext;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public byte @NotNull [] next() {
+        if (!hasNext()) throw new NoSuchElementException();
+        if (this.buffer == null) this.buffer = new byte[bufferSize];
+        try {
+            alreadyNext = false;
             while (true) {
-                n = inputStream.read();
+                var n = inputStream.read();
                 if (n == -1) break;
                 messageDigest.update(buffer, 0, n);
             }
@@ -47,19 +62,5 @@ class HashIteratorImpl implements Iterator<byte[]> {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    @Override
-    public boolean hasNext() {
-        if (last == null) last = doHash();
-        return last != null;
-    }
-
-    @Override
-    public byte @NotNull [] next() {
-        if (!hasNext()) throw new NoSuchElementException();
-        var t = last;
-        last = null;
-        return t;
     }
 }
