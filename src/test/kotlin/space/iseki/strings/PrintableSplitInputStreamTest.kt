@@ -23,6 +23,7 @@ class PrintableSplitInputStreamTest {
 
     @Test
     fun test2() {
+        // strings gradle/wrapper/gradle-wrapper.jar > src/test/resources/gradle-wrapper-strings
         val data =
             this::class.java.classLoader.getResourceAsStream("gradle-wrapper-strings").use { it.reader().readLines() }
         Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().buffered().let(::PrintableSplitInputStream)
@@ -41,6 +42,7 @@ class PrintableSplitInputStreamTest {
 
     @Test
     fun test3() {
+        // strings -wn 8 gradle/wrapper/gradle-wrapper.jar > src/test/resources/gradle-wrapper-strings-8s
         val data =
             this::class.java.classLoader.getResourceAsStream("gradle-wrapper-strings-8s").use { it.reader().readText() }
         val r = Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().use { input ->
@@ -52,7 +54,7 @@ class PrintableSplitInputStreamTest {
                     add(s)
                     splitter.next()
                 }
-            }.joinToString(separator = "-----", postfix = "-----")
+            }.joinToString("\n", postfix = "\n")
         }
         assertEquals(data, r)
     }
