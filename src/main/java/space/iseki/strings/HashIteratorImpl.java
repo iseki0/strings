@@ -1,7 +1,6 @@
 package space.iseki.strings;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -31,7 +30,7 @@ class HashIteratorImpl implements Iterator<byte[]> {
         this(messageDigest, inputStream, DEFAULT_BUFFER_SIZE);
     }
 
-    private byte @Nullable [] doHash() {
+    private byte[] doHash() {
         try {
             inputStream.next();
             var n = inputStream.read(buffer);
