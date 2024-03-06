@@ -17,7 +17,7 @@ public class Strings {
      * @param inputStream   the source input stream. It's the caller's responsibility to close the input stream.
      * @return the returned iterator will throw {@link java.io.UncheckedIOException} when the underlying input stream throws {@link java.io.IOException}
      */
-    public static @NotNull Iterator<byte[]> createHashIterator(@NotNull MessageDigest messageDigest, @NotNull InputStream inputStream) {
+    public static @NotNull Iterator<byte @NotNull []> createHashIterator(@NotNull MessageDigest messageDigest, @NotNull InputStream inputStream) {
         return createHashIterator(messageDigest, inputStream, Option.DEFAULT);
     }
 
@@ -29,7 +29,7 @@ public class Strings {
      * @param option        the options, just like strings command.
      * @return the returned iterator will throw {@link java.io.UncheckedIOException} when the underlying input stream throws {@link java.io.IOException}
      */
-    public static @NotNull Iterator<byte[]> createHashIterator(@NotNull MessageDigest messageDigest, @NotNull InputStream inputStream, @NotNull Option option) {
+    public static @NotNull Iterator<byte @NotNull []> createHashIterator(@NotNull MessageDigest messageDigest, @NotNull InputStream inputStream, @NotNull Option option) {
         return new HashIteratorImpl(messageDigest, create(inputStream, option));
     }
 
@@ -39,7 +39,7 @@ public class Strings {
      * @param inputStream the source input stream. It's the caller's responsibility to close the input stream.
      * @return the returned iterator will throw {@link java.io.UncheckedIOException} when the underlying input stream throws {@link java.io.IOException}
      */
-    public static @NotNull Iterator<byte[]> createByteArrayIterator(@NotNull InputStream inputStream) {
+    public static @NotNull Iterator<byte @NotNull []> createByteArrayIterator(@NotNull InputStream inputStream) {
         return createByteArrayIterator(inputStream, Option.DEFAULT);
     }
 
@@ -50,7 +50,7 @@ public class Strings {
      * @param option      the options, just like strings command.
      * @return the returned iterator will throw {@link java.io.UncheckedIOException} when the underlying input stream throws {@link java.io.IOException}
      */
-    public static @NotNull Iterator<byte[]> createByteArrayIterator(@NotNull InputStream inputStream, @NotNull Option option) {
+    public static @NotNull Iterator<byte @NotNull []> createByteArrayIterator(@NotNull InputStream inputStream, @NotNull Option option) {
         return new BytesIteratorImpl(create(inputStream, option));
     }
 

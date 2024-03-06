@@ -24,7 +24,7 @@ class BytesIteratorImpl implements Iterator<byte[]> {
     }
 
     @Override
-    public @NotNull byte[] next() {
+    public byte @NotNull [] next() {
         if (!hasNext()) throw new NoSuchElementException();
         var t = last;
         last = null;

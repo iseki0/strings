@@ -31,7 +31,7 @@ class HashIteratorImpl implements Iterator<byte[]> {
         this(messageDigest, inputStream, DEFAULT_BUFFER_SIZE);
     }
 
-    private @Nullable byte[] doHash() {
+    private byte @Nullable [] doHash() {
         try {
             inputStream.next();
             var n = inputStream.read(buffer);
@@ -57,7 +57,7 @@ class HashIteratorImpl implements Iterator<byte[]> {
     }
 
     @Override
-    public @NotNull byte[] next() {
+    public byte @NotNull [] next() {
         if (!hasNext()) throw new NoSuchElementException();
         var t = last;
         last = null;
