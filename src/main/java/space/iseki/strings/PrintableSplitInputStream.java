@@ -60,9 +60,8 @@ class PrintableSplitInputStream extends InputStream {
     private final InputStream inputStream;
     private final boolean space;
     private final byte[] buf;
-    private int pos;
-    private boolean acc = true;
-    private boolean pause = false;
+    private int bufferRead;
+    private boolean goon;
 
     PrintableSplitInputStream(@NotNull InputStream inputStream, int min) {
         this(inputStream, min, false);
@@ -81,41 +80,68 @@ class PrintableSplitInputStream extends InputStream {
         this(inputStream, 4);
     }
 
-
-    @Override
-    public int read() throws IOException {
-        while (true) {
-            if (pause) return -1;
-            if (acc) {
-                var i = inputStream.read();
-                if (i == -1) return -1;
-                if (printable(i)) {
-                    buf[pos++] = (byte) i;
-                    if (pos == buf.length) {
-                        acc = false;
-                    }
-                } else {
-                    pos = 0;
-                }
-            } else {
-                if (pos == 0) {
-                    var i = inputStream.read();
-                    if (i == -1) return -1;
-                    if (!printable(i)) {
-                        acc = true;
-                    }
-                    if (printable(i)) return i;
-                    acc = true;
-                    pause = true;
-                } else {
-                    return buf[buf.length - pos--] & 0xff;
+    /**
+     * @return true if the buffer is fulfilled, false if the input stream is EOF.
+     * @throws IOException if an I/O error occurs.
+     */
+    private boolean doPreRead() throws IOException {
+        while (bufferRead < buf.length) {
+            var n = inputStream.read(buf, bufferRead, buf.length - bufferRead);
+            if (n == -1) {
+                bufferRead = 0;
+                return false;
+            }
+            var oldSize = bufferRead;
+            bufferRead += n;
+            for (int i = bufferRead - 1; i >= oldSize; i--) {
+                if (!printable(buf[i] & 0xff)) {
+                    System.arraycopy(buf, i + 1, buf, 0, bufferRead - i - 1);
+                    bufferRead = bufferRead - i - 1;
+                    break;
                 }
             }
         }
+        return true;
     }
 
-    public void next() {
-        pause = false;
+
+    @Override
+    public int read() throws IOException {
+        if (!goon) return -1;
+        if (bufferRead > 0) {
+            return buf[buf.length - bufferRead--] & 0xff;
+        }
+        var i = inputStream.read();
+        if (i == -1) {
+            goon = false;
+            return -1;
+        }
+        if (printable(i)) {
+            return i;
+        }
+        goon = false;
+        return -1;
+    }
+
+    public boolean next() throws IOException {
+        if (goon) {
+            bufferRead = 0;
+            goon = false;
+            while (true) {
+                var i = inputStream.read();
+                if (i == -1) {
+                    return false;
+                }
+                if (!printable(i)) {
+                    break;
+                }
+            }
+        }
+        if (doPreRead()) {
+            goon = true;
+            return true;
+        }
+        return false;
     }
 
     private boolean printable(int ch) {
