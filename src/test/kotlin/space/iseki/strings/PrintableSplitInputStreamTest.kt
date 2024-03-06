@@ -56,4 +56,25 @@ class PrintableSplitInputStreamTest {
         assertEquals(data, r)
     }
 
+    @Test
+    fun test4() {
+        val r = Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().use { input ->
+            val splitter = PrintableSplitInputStream(input.buffered(), 8, true)
+            buildList {
+                while (splitter.next()) {
+                    val s = splitter.readBytes().toString(StandardCharsets.ISO_8859_1)
+                    if (s.isEmpty()) break
+                    add(s)
+                }
+            }.joinToString("\n", postfix = "\n")
+        }
+        val t = Strings.of(
+            Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream(),
+            byteArrayOf('\n'.code.toByte()),
+            Strings.Option(8, true)
+        ).use { it.reader().readText() }
+        assertEquals(r, t)
+        println(t)
+    }
+
 }

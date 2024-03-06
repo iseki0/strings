@@ -4,12 +4,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
  * The StringsIter is used to create iterator of data that derived from "strings".
  */
 public class Strings {
+    private static final byte[] DEFAULT_LINEBREAK = new byte[]{'\n'};
+
     /**
      * Returns an iterator hashing the extracted strings from the specified input stream with default option.
      *
@@ -52,6 +55,18 @@ public class Strings {
      */
     public static @NotNull Iterator<byte @NotNull []> createByteArrayIterator(@NotNull InputStream inputStream, @NotNull Option option) {
         return new BytesIteratorImpl(create(inputStream, option));
+    }
+
+    public static @NotNull InputStream of(@NotNull InputStream inputStream, byte @NotNull [] separator, @NotNull Option option) {
+        return new RebuildStringsInputStream(create(inputStream, option), Arrays.copyOf(separator, separator.length));
+    }
+
+    public static @NotNull InputStream of(@NotNull InputStream inputStream, byte @NotNull [] separator) {
+        return of(inputStream, separator, Option.DEFAULT);
+    }
+
+    public static @NotNull InputStream of(@NotNull InputStream inputStream) {
+        return of(inputStream, DEFAULT_LINEBREAK, Option.DEFAULT);
     }
 
     private static PrintableSplitInputStream create(InputStream inputStream, Option option) {
