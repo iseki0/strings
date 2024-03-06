@@ -61,6 +61,7 @@ public class Strings {
     /**
      * Options, just like strings command
      */
+    @SuppressWarnings("unused")
     public record Option(int min, boolean space) {
         static Option DEFAULT = new Option();
 
