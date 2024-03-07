@@ -71,7 +71,7 @@ class PrintableSplitInputStreamTest {
         val t = Strings.of(
             Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream(),
             byteArrayOf('\n'.code.toByte()),
-            Strings.Option(8, true)
+            Strings.Option.Builder().setMin(8).setSpace(true).createOption(),
         ).use { it.reader().readText() }
         assertEquals(r, t)
         println(t)

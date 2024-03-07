@@ -2,7 +2,6 @@ package space.iseki.strings;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Objects;
 
 class RebuildStringsInputStream extends InputStream {
@@ -13,7 +12,7 @@ class RebuildStringsInputStream extends InputStream {
 
     RebuildStringsInputStream(PrintableSplitInputStream inputStream, byte[] separator) {
         this.inputStream = Objects.requireNonNull(inputStream, "inputStream == null");
-        this.separator = Arrays.copyOf(separator, separator.length);
+        this.separator = separator;
         this.sPos = separator.length;
         if (separator.length == 0) {
             throw new IllegalArgumentException("separator.length == 0");
