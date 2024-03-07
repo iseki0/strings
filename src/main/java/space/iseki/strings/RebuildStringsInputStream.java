@@ -36,4 +36,10 @@ class RebuildStringsInputStream extends InputStream {
         goon = inputStream.next();
         return inputStream.read();
     }
+
+    @Override
+    public void close() throws IOException {
+        inputStream.close();
+    }
+
 }
