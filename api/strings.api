@@ -1,0 +1,38 @@
+public final class space/iseki/strings/PrintableSplittedInputStream : java/io/InputStream {
+	public fun close ()V
+	public fun next ()Z
+	public fun read ()I
+}
+
+public class space/iseki/strings/Strings {
+	public fun <init> ()V
+	public static fun createByteArrayIterator (Ljava/io/InputStream;)Ljava/util/Iterator;
+	public static fun createByteArrayIterator (Ljava/io/InputStream;Lspace/iseki/strings/Strings$Option;)Ljava/util/Iterator;
+	public static fun createHashIterator (Ljava/security/MessageDigest;Ljava/io/InputStream;)Ljava/util/Iterator;
+	public static fun createHashIterator (Ljava/security/MessageDigest;Ljava/io/InputStream;Lspace/iseki/strings/Strings$Option;)Ljava/util/Iterator;
+	public static fun of (Ljava/io/InputStream;)Ljava/io/InputStream;
+	public static fun of (Ljava/io/InputStream;Lspace/iseki/strings/Strings$Option;)Ljava/io/InputStream;
+	public static fun of (Ljava/io/InputStream;[B)Ljava/io/InputStream;
+	public static fun of (Ljava/io/InputStream;[BLspace/iseki/strings/Strings$Option;)Ljava/io/InputStream;
+}
+
+public final class space/iseki/strings/Strings$Option {
+	public static final field DEFAULT Lspace/iseki/strings/Strings$Option;
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun <init> (IZ)V
+	public fun <init> (Z)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun min ()I
+	public fun space ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public class space/iseki/strings/Strings$Option$Builder {
+	public fun <init> ()V
+	public fun createOption ()Lspace/iseki/strings/Strings$Option;
+	public fun setMin (I)Lspace/iseki/strings/Strings$Option$Builder;
+	public fun setSpace (Z)Lspace/iseki/strings/Strings$Option$Builder;
+}
+
