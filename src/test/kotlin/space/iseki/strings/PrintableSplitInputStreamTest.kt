@@ -44,7 +44,8 @@ class PrintableSplitInputStreamTest {
         val data =
             this::class.java.classLoader.getResourceAsStream("gradle-wrapper-strings-8s").use { it.reader().readText() }
         val r = Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().use { input ->
-            val splitter = PrintableSplitInputStream(input.buffered(), 8, true)
+            val splitter =
+                PrintableSplitInputStream(input.buffered(), 8, true)
             buildList {
                 while (splitter.next()) {
                     val s = splitter.readBytes().toString(StandardCharsets.ISO_8859_1)
@@ -59,7 +60,8 @@ class PrintableSplitInputStreamTest {
     @Test
     fun test4() {
         val r = Path.of("./gradle/wrapper/gradle-wrapper.jar").inputStream().use { input ->
-            val splitter = PrintableSplitInputStream(input.buffered(), 8, true)
+            val splitter =
+                PrintableSplitInputStream(input.buffered(), 8, true)
             buildList {
                 while (splitter.next()) {
                     val s = splitter.readBytes().toString(StandardCharsets.ISO_8859_1)
