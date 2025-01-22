@@ -56,7 +56,7 @@ import java.io.InputStream;
  * @see <a href="https://github.com/redox-os/binutils-gdb/blob/f35674005e609660f5f45005a9e095541ca4c5fe/binutils/strings.c#L79">strings.c</a>
  * @see <a href="https://github.com/gcc-mirror/gcc/blob/86d92c84762f8c805c4e3d87f394c095139c81f0/libiberty/safe-ctype.c#L126">safe-ctype.c</a>
  */
-public final class PrintableSplitInputStream extends InputStream {
+final class PrintableSplitInputStream extends InputStream {
     private final InputStream inputStream;
     private final boolean space;
     private final byte[] buf;

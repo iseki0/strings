@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class HashIteratorImpl implements Iterator<byte[]> {
+final class HashIteratorImpl implements Iterator<byte[]> {
     private static final int DEFAULT_BUFFER_SIZE = 16 * 1024;
     private final MessageDigest messageDigest;
     private final PrintableSplitInputStream inputStream;

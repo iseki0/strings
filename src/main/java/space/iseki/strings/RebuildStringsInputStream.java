@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-class RebuildStringsInputStream extends InputStream {
+final class RebuildStringsInputStream extends InputStream {
     private final PrintableSplitInputStream inputStream;
     private final byte[] separator;
     private boolean goon;

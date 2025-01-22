@@ -7,7 +7,7 @@ import java.io.UncheckedIOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class BytesIteratorImpl implements Iterator<byte[]> {
+final class BytesIteratorImpl implements Iterator<byte[]> {
     private final PrintableSplitInputStream inputStream;
     private boolean alreadyNext;
     private boolean lastNext;

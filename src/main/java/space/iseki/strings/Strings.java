@@ -14,7 +14,7 @@ import java.util.Objects;
  * The StringsIter is used to create iterator of data that derived from "strings".
  */
 @SuppressWarnings("unused")
-public class Strings {
+public final class Strings {
     private static final byte[] DEFAULT_LINEBREAK = new byte[]{'\n'};
 
     /**
