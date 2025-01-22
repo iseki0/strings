@@ -11,11 +11,11 @@ import java.util.NoSuchElementException;
 class HashIteratorImpl implements Iterator<byte[]> {
     private static final int DEFAULT_BUFFER_SIZE = 16 * 1024;
     private final MessageDigest messageDigest;
-    private byte[] buffer;
     private final PrintableSplitInputStream inputStream;
+    private final int bufferSize;
+    private byte[] buffer;
     private boolean alreadyNext;
     private boolean lastNext;
-    private final int bufferSize;
 
 
     @SuppressWarnings("ConstantValue")
