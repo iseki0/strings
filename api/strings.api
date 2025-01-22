@@ -4,6 +4,7 @@ public final class space/iseki/strings/Strings {
 	public static fun createByteArrayIterator (Ljava/io/InputStream;Lspace/iseki/strings/Strings$Option;)Ljava/util/Iterator;
 	public static fun createHashIterator (Ljava/security/MessageDigest;Ljava/io/InputStream;)Ljava/util/Iterator;
 	public static fun createHashIterator (Ljava/security/MessageDigest;Ljava/io/InputStream;Lspace/iseki/strings/Strings$Option;)Ljava/util/Iterator;
+	public static fun main ([Ljava/lang/String;)V
 	public static fun of (Ljava/io/InputStream;)Ljava/io/InputStream;
 	public static fun of (Ljava/io/InputStream;Lspace/iseki/strings/Strings$Option;)Ljava/io/InputStream;
 	public static fun of (Ljava/io/InputStream;[B)Ljava/io/InputStream;

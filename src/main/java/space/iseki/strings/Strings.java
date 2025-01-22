@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -199,4 +201,8 @@ public final class Strings {
 
     }
 
+    public static void main(String[] args) throws Exception {
+        var input = Objects.equals(args[0], "-") ? System.in : Files.newInputStream(Path.of(args[0]));
+        Strings.of(input).transferTo(System.out);
+    }
 }

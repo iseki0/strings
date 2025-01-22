@@ -5,6 +5,7 @@ plugins {
     signing
     `maven-publish`
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3"
+    application
 }
 
 group = "space.iseki.strings"
@@ -21,8 +22,22 @@ dependencies {
     jmh(kotlin("stdlib"))
 }
 
+application {
+    mainClass = "space.iseki.strings.Strings"
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "space.iseki.strings.Strings"
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 fun JavaToolchainSpec.configure() {
